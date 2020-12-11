@@ -4,7 +4,6 @@
 
 <br/>
 <hr/>
-
 <a href="/people">Start</a>
 
 </body>
