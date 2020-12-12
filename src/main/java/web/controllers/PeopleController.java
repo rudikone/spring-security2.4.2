@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import web.models.Person;
+import web.models.User;
 import web.models.Role;
 import web.service.RoleService;
 import web.service.UserService;
@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Controller
-@RequestMapping("/people")
+@RequestMapping("")
 public class PeopleController {
 
     @Autowired
@@ -24,27 +24,27 @@ public class PeopleController {
     @Autowired
     private RoleService roleService;
 
-    @GetMapping()
+    @GetMapping("/people")
     public String index(Model model) {
         model.addAttribute("people", userService.index());
         return "people/index";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/people/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("person", userService.show(id));
-        return "user/show";
+        return "people/show";
     }
 
-    @GetMapping("/new")
+    @GetMapping("/people/new")
     public String newPerson(Model model) {
-        model.addAttribute("person", new Person());
+        model.addAttribute("person", new User());
 
         return "people/new";
     }
 
-    @PostMapping()
-    public String create(@ModelAttribute("person") @Valid Person person,
+    @PostMapping("/people")
+    public String create(@ModelAttribute("person") @Valid User person,
                          @RequestParam(value = "ADMIN", required = false) boolean isAdmin,
                          @RequestParam(value = "USER", required = false) boolean isUser,
                          BindingResult bindingResult) {
@@ -67,14 +67,14 @@ public class PeopleController {
         return "redirect:/people";
     }
 
-    @GetMapping("/{id}/edit")
+    @GetMapping("/people/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
         model.addAttribute("person", userService.show(id));
         return "people/edit";
     }
 
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") @Valid Person person,
+    @PatchMapping("/people/{id}")
+    public String update(@ModelAttribute("person") @Valid User person,
                          @PathVariable("id") int id,
                          @RequestParam(value = "ADMIN", required = false) boolean isAdmin,
                          @RequestParam(value = "USER", required = false) boolean isUser,
@@ -92,16 +92,30 @@ public class PeopleController {
             roles.add(roleService.findRoleById(2));
         }
 
-
         person.setRoles(roles);
 
         userService.update(id, person);
         return "redirect:/people";
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/people/{id}")
     public String delete(@PathVariable("id") int id) {
         userService.delete(id);
         return "redirect:/people";
+    }
+
+    @GetMapping("/login")
+    public String getLoginPage() {
+        return "people/login";
+    }
+
+    @GetMapping(value = "/user")
+    public String getUserPage() {
+        return "people/user";
+    }
+
+    @GetMapping(value = "/")
+    public String getHomePage() {
+        return "people/homepage";
     }
 }

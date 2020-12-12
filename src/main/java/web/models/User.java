@@ -1,19 +1,24 @@
 package web.models;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class Person {
+public class User implements UserDetails {
 
-    @Id
+//    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Id
     @Column(name = "name")
     @NotEmpty(message = "Name should not be empty")
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
@@ -32,11 +37,11 @@ public class Person {
     )
     private Set<Role> roles;
 
-    public Person() {
+    public User() {
 
     }
 
-    public Person(int id, @NotEmpty(message = "Name should not be empty") @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters") String name, @NotEmpty(message = "Password should not be empty") @Size(min = 2, max = 30, message = "Password should be between 2 and 30 characters") String password, Set<Role> roles) {
+    public User(int id, @NotEmpty(message = "Name should not be empty") @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters") String name, @NotEmpty(message = "Password should not be empty") @Size(min = 2, max = 30, message = "Password should be between 2 and 30 characters") String password, Set<Role> roles) {
         this.id = id;
         this.name = name;
         this.password = password;
@@ -59,11 +64,41 @@ public class Person {
         this.name = name;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
 
-    //без паблика не работает
+    @Override
     public String getPassword() {
         return password;
     }
+
+    @Override
+    public String getUsername() {
+        return name;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 
     public void setPassword(String password) {
         this.password = password;
@@ -86,4 +121,6 @@ public class Person {
         roles.remove(role);
         role.getPeople().remove(this);
     }
+
+
 }
