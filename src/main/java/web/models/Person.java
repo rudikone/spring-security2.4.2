@@ -86,6 +86,4 @@ public class Person {
         roles.remove(role);
         role.getPeople().remove(this);
     }
-
-
 }
