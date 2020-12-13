@@ -5,7 +5,7 @@ import web.models.User;
 import java.util.List;
 
 public interface UserService {
-    public List<User> index();
+    public List<User> getAllUsers();
 
     public User show(int id);
 
@@ -15,4 +15,5 @@ public interface UserService {
 
     public void delete(int id);
 
+    public User getUserByName(String name);
 }

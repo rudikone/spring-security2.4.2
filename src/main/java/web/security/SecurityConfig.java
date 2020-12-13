@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -18,7 +19,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
     private final SuccessUserHandler successUserHandler; // класс, в котором описана логика перенаправления пользователей по ролям
 
-    //userDetailsServiceImpl
     public SecurityConfig(@Qualifier("userServiceImpl") UserDetailsService userDetailsService, SuccessUserHandler successUserHandler) {
         this.userDetailsService = userDetailsService;
         this.successUserHandler = successUserHandler;
@@ -31,17 +31,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable(); //- попробуйте выяснить сами, что это даёт
-        http.authorizeRequests()
-                .antMatchers("/").permitAll() // доступность всем
-                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
-                .antMatchers(HttpMethod.POST,"/people/**").access("hasAnyRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.GET,"/people/**").access("hasAnyRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.DELETE,"/people/**").access("hasAnyRole('ROLE_ADMIN')")
+//        http.csrf().disable();
+//        http.authorizeRequests()
+//                .antMatchers("/").permitAll() // доступность всем
+//                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
+//                .antMatchers("/admin/**").access("hasAnyRole('ROLE_ADMIN')")
+//                .anyRequest()
+//                .authenticated()
+//                .and().formLogin()  // Spring сам подставит свою логин форму
+//                .successHandler(successUserHandler); // подключаем наш SuccessHandler для перенеправления по ролям
+        http.csrf().disable() // токен безопасности CSRF для предоставления доступа только авторизованным пользователям.
+                .authorizeRequests() // делаем страницу регистрации недоступной для авторизированных пользователей
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/users").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and().formLogin()  // Spring сам подставит свою логин форму
-                .successHandler(successUserHandler); // подключаем наш SuccessHandler для перенеправления по ролям
+                .successHandler(successUserHandler) // подключаем наш SuccessHandler для перенеправления по ролям
+                .and()
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login")
+                .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true);
     }
 
     // Необходимо для шифрования паролей

@@ -6,6 +6,8 @@ import web.models.Role;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Set;
 
@@ -17,9 +19,9 @@ public class UserDAOImpl implements UserDAO {
     private EntityManager entityManager;
 
     @Override
-    public List<User> index() {
-        List<User> users = entityManager.createQuery("from Person").getResultList();
-        return users;
+    public List<User> getAllUsers() {
+        TypedQuery<User> typedQuery = entityManager.createQuery("from User", User.class);
+        return typedQuery.getResultList();
     }
 
     @Override
@@ -53,7 +55,10 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public User getUserByName(String name) {
-        return entityManager.find(User.class, name);
+
+//        return entityManager.find(User.class, name);
+
+        return entityManager.createQuery("FROM User U WHERE U.name = :paramName", User.class).setParameter("paramName", name).getSingleResult();
     }
 }
 

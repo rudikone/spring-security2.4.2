@@ -11,6 +11,7 @@ import web.service.RoleService;
 import web.service.UserService;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,34 +25,35 @@ public class PeopleController {
     @Autowired
     private RoleService roleService;
 
-    @GetMapping("/people")
-    public String index(Model model) {
-        model.addAttribute("people", userService.index());
-        return "people/index";
+    @GetMapping("/admin/users")
+    public String getAllUsers(Model model) {
+        System.out.println(userService.getAllUsers());
+        model.addAttribute("users", userService.getAllUsers());
+
+        return "pages/index";
     }
 
-    @GetMapping("/people/{id}")
+    @GetMapping("/admin/users/{id}")
     public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("person", userService.show(id));
-        return "people/show";
+        model.addAttribute("user", userService.show(id));
+        return "pages/show";
     }
 
-    @GetMapping("/people/new")
-    public String newPerson(Model model) {
-        model.addAttribute("person", new User());
+    @GetMapping("/admin/users/new")
+    public String newUser(Model model) {
+        model.addAttribute("user", new User());
 
-        return "people/new";
+        return "pages/new";
     }
 
-    @PostMapping("/people")
-    public String create(@ModelAttribute("person") @Valid User person,
+    @PostMapping("/admin/users")
+    public String create(@ModelAttribute("user") @Valid User user,
                          @RequestParam(value = "ADMIN", required = false) boolean isAdmin,
                          @RequestParam(value = "USER", required = false) boolean isUser,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "people/new";
+            return "admin/users/new";
         }
-
         Set<Role> roles = new HashSet<>();
 
         if (isAdmin) {
@@ -61,26 +63,26 @@ public class PeopleController {
             roles.add(roleService.findRoleById(2));
         }
 
-        person.setRoles(roles);
+        user.setRoles(roles);
+        userService.save(user);
 
-        userService.save(person);
-        return "redirect:/people";
+        return "redirect:/admin/users";
     }
 
-    @GetMapping("/people/{id}/edit")
+    @GetMapping("/admin/users/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("person", userService.show(id));
-        return "people/edit";
+        model.addAttribute("user", userService.show(id));
+        return "pages/edit";
     }
 
-    @PatchMapping("/people/{id}")
-    public String update(@ModelAttribute("person") @Valid User person,
+    @PatchMapping("/admin/users/{id}")
+    public String update(@ModelAttribute("user") @Valid User user,
                          @PathVariable("id") int id,
                          @RequestParam(value = "ADMIN", required = false) boolean isAdmin,
                          @RequestParam(value = "USER", required = false) boolean isUser,
                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "people/edit";
+            return "admin/users/edit";
         }
 
         Set<Role> roles = new HashSet<>();
@@ -92,30 +94,27 @@ public class PeopleController {
             roles.add(roleService.findRoleById(2));
         }
 
-        person.setRoles(roles);
+        user.setRoles(roles);
 
-        userService.update(id, person);
-        return "redirect:/people";
+        userService.update(id, user);
+        return "redirect:/admin/users";
     }
 
-    @DeleteMapping("/people/{id}")
+    @DeleteMapping("/admin/users/{id}")
     public String delete(@PathVariable("id") int id) {
         userService.delete(id);
-        return "redirect:/people";
+        return "redirect:/admin/users";
     }
 
-    @GetMapping("/login")
-    public String getLoginPage() {
-        return "people/login";
-    }
+//    @GetMapping("/login")
+//    public String getLoginPage() {
+//        return "login";
+//    }
 
     @GetMapping(value = "/user")
-    public String getUserPage() {
-        return "people/user";
-    }
-
-    @GetMapping(value = "/")
-    public String getHomePage() {
-        return "people/homepage";
+    public String getUserPage(Model model, Principal principal) {
+String userName = principal.getName();
+model.addAttribute("user", userService.getUserByName(userName));
+        return "pages/user";
     }
 }

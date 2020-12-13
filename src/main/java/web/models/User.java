@@ -13,12 +13,11 @@ import java.util.Set;
 @Table(name = "users")
 public class User implements UserDetails {
 
-//    @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @Id
     @Column(name = "name")
     @NotEmpty(message = "Name should not be empty")
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
@@ -41,18 +40,18 @@ public class User implements UserDetails {
 
     }
 
-    public User(int id, @NotEmpty(message = "Name should not be empty") @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters") String name, @NotEmpty(message = "Password should not be empty") @Size(min = 2, max = 30, message = "Password should be between 2 and 30 characters") String password, Set<Role> roles) {
+    public User(Integer id, @NotEmpty(message = "Name should not be empty") @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters") String name, @NotEmpty(message = "Password should not be empty") @Size(min = 2, max = 30, message = "Password should be between 2 and 30 characters") String password, Set<Role> roles) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.roles = roles;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -114,13 +113,12 @@ public class User implements UserDetails {
 
     public void addRole(Role role) {
         roles.add(role);
-        role.getPeople().add(this);
+        role.getUsers().add(this);
     }
 
     public void removeRole(Role role) {
         roles.remove(role);
-        role.getPeople().remove(this);
+        role.getUsers().remove(this);
     }
-
 
 }

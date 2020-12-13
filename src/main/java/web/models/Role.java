@@ -11,14 +11,15 @@ public class Role implements GrantedAuthority {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "role")
     private String role;
 
+//    @Transient
     @ManyToMany(mappedBy = "roles")
-    private Set<User> people;
+    private Set<User> users;
 
 
     public Role(Integer id, String role) {
@@ -45,12 +46,12 @@ public class Role implements GrantedAuthority {
         this.role = role;
     }
 
-    public Set<User> getPeople() {
-        return people;
+    public Set<User> getUsers() {
+        return users;
     }
 
-    public void setPeople(Set<User> people) {
-        this.people = people;
+    public void setUsers(Set<User> people) {
+        this.users = users;
     }
 
     @Override
