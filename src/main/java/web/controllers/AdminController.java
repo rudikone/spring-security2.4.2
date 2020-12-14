@@ -5,19 +5,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import web.models.User;
 import web.models.Role;
+import web.models.User;
 import web.service.RoleService;
 import web.service.UserService;
-
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
 @Controller
-@RequestMapping("")
-public class PeopleController {
+@RequestMapping("/admin")
+public class AdminController {
 
     @Autowired
     private UserService userService;
@@ -25,35 +23,35 @@ public class PeopleController {
     @Autowired
     private RoleService roleService;
 
-    @GetMapping("/admin/users")
+    @GetMapping("/users")
     public String getAllUsers(Model model) {
         System.out.println(userService.getAllUsers());
         model.addAttribute("users", userService.getAllUsers());
-
         return "pages/index";
     }
 
-    @GetMapping("/admin/users/{id}")
+    @GetMapping("/users/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("user", userService.show(id));
         return "pages/show";
     }
 
-    @GetMapping("/admin/users/new")
+    @GetMapping("/users/new")
     public String newUser(Model model) {
         model.addAttribute("user", new User());
-
         return "pages/new";
     }
 
-    @PostMapping("/admin/users")
+    @PostMapping("/users")
     public String create(@ModelAttribute("user") @Valid User user,
                          @RequestParam(value = "ADMIN", required = false) boolean isAdmin,
                          @RequestParam(value = "USER", required = false) boolean isUser,
                          BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
             return "admin/users/new";
         }
+
         Set<Role> roles = new HashSet<>();
 
         if (isAdmin) {
@@ -69,18 +67,19 @@ public class PeopleController {
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/admin/users/{id}/edit")
+    @GetMapping("/users/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
         model.addAttribute("user", userService.show(id));
         return "pages/edit";
     }
 
-    @PatchMapping("/admin/users/{id}")
+    @PatchMapping("/users/{id}")
     public String update(@ModelAttribute("user") @Valid User user,
                          @PathVariable("id") int id,
                          @RequestParam(value = "ADMIN", required = false) boolean isAdmin,
                          @RequestParam(value = "USER", required = false) boolean isUser,
                          BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
             return "admin/users/edit";
         }
@@ -95,22 +94,13 @@ public class PeopleController {
         }
 
         user.setRoles(roles);
-
         userService.update(id, user);
         return "redirect:/admin/users";
     }
 
-    @DeleteMapping("/admin/users/{id}")
+    @DeleteMapping("/users/{id}")
     public String delete(@PathVariable("id") int id) {
         userService.delete(id);
         return "redirect:/admin/users";
-    }
-
-
-    @GetMapping(value = "/user")
-    public String getUserPage(Model model, Principal principal) {
-String userName = principal.getName();
-model.addAttribute("user", userService.getUserByName(userName));
-        return "pages/user";
     }
 }
