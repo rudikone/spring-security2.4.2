@@ -106,10 +106,6 @@ public class PeopleController {
         return "redirect:/admin/users";
     }
 
-//    @GetMapping("/login")
-//    public String getLoginPage() {
-//        return "login";
-//    }
 
     @GetMapping(value = "/user")
     public String getUserPage(Model model, Principal principal) {
