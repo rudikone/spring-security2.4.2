@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.dao.UserDAO;
 import web.models.User;
-
 import java.util.List;
 
 @Service
@@ -31,8 +30,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void update(int id, User updatePerson) {
-        userDAO.update(id, updatePerson);
+    public void update(int id, User updateUser) {
+        User userToBeUpdated = userDAO.show(id);
+        userToBeUpdated.setName(updateUser.getName());
+        userToBeUpdated.setPassword(updateUser.getPassword());
+        userToBeUpdated.setRoles(updateUser.getRoles());
+        userDAO.update(userToBeUpdated);
     }
 
     @Override
@@ -44,7 +47,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void delete(int id) {
-        userDAO.delete(id);
+        userDAO.delete(userDAO.show(id));
     }
 
     @Override
@@ -55,7 +58,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public User getUserByName(String name){
+    public User getUserByName(String name) {
         return userDAO.getUserByName(name);
     }
 }

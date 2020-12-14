@@ -10,11 +10,11 @@ public interface UserDAO {
 
     public User show(int id);
 
-    public void update(int id, User updatePerson);
+    public void update(User userToBeUpdated);
 
     public void save(User person);
 
-    public void delete(int id);
+    public void delete(User user);
 
     public User getUserByName(String name);
 }
