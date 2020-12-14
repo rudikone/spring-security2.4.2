@@ -20,57 +20,6 @@ import java.util.Set;
 @Component
 public class SuccessUserHandler implements AuthenticationSuccessHandler {
 
-//
-//    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-//
-//    @Override
-//    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-//        handle(request, response, authentication);
-//        clearAuthenticationAttributes(request);
-//    }
-//
-//    protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-//        String targetUrl = determineTargetUrl(authentication);
-//        redirectStrategy.sendRedirect(request, response, targetUrl);
-//    }
-//
-//    protected String determineTargetUrl(Authentication authentication) {
-//        boolean isUser = false;
-//        boolean isAdmin = false;
-//        Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-//
-//        if (roles.contains("ROLE_USER")) {
-//                isUser = true;
-//            } else if (roles.contains("ROLE_ADMIN")) {
-//                isAdmin = true;
-//            }
-//
-//
-//        if (isUser) {
-//            return "/user";
-//        } else if (isAdmin) {
-//            return "/index";
-//        } else {
-//            throw new IllegalStateException();
-//        }
-//    }
-//
-//    protected void clearAuthenticationAttributes(HttpServletRequest request) {
-//        HttpSession session = request.getSession(false);
-//        if (session == null) {
-//            return;
-//        }
-//        session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-//    }
-//
-//    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
-//        this.redirectStrategy = redirectStrategy;
-//    }
-//
-//    protected RedirectStrategy getRedirectStrategy() {
-//        return redirectStrategy;
-//    }
-
     // Spring Security использует объект Authentication, пользователя авторизованной сессии.
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {

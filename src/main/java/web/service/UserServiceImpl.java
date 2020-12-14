@@ -24,13 +24,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public User show(int id) {
+    public User show(Long id) {
         return userDAO.show(id);
     }
 
     @Override
     @Transactional
-    public void update(int id, User updateUser) {
+    public void update(Long id, User updateUser) {
         User userToBeUpdated = userDAO.show(id);
         userToBeUpdated.setName(updateUser.getName());
         userToBeUpdated.setPassword(updateUser.getPassword());
@@ -40,20 +40,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public void save(User person) {
-        userDAO.save(person);
+    public void save(User user) {
+        userDAO.save(user);
     }
 
     @Override
     @Transactional
-    public void delete(int id) {
+    public void delete(Long id) {
         userDAO.delete(userDAO.show(id));
     }
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return userDAO.getUserByName(s);
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        return userDAO.getUserByName(userName);
     }
 
     @Override
