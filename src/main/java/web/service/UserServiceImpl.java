@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.dao.UserDAO;
@@ -15,6 +16,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -33,7 +37,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void update(Long id, User updateUser) {
         User userToBeUpdated = userDAO.show(id);
         userToBeUpdated.setName(updateUser.getName());
-        userToBeUpdated.setPassword(updateUser.getPassword());
+        userToBeUpdated.setPassword(passwordEncoder.encode(updateUser.getPassword()));
         userToBeUpdated.setRoles(updateUser.getRoles());
         userDAO.update(userToBeUpdated);
     }
@@ -41,6 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDAO.save(user);
     }
 

@@ -25,7 +25,7 @@ public class User implements UserDetails {
 
     @Column(name = "password")
     @NotEmpty(message = "Password should not be empty")
-    @Size(min = 2, max = 30, message = "Password should be between 2 and 30 characters")
+    @Size(min = 2, max = 100, message = "Password should be between 2 and 30 characters")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
