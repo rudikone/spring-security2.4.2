@@ -25,7 +25,7 @@ public class AdminController {
 
     @GetMapping("/users")
     public String getAllUsers(Model model) {
-        System.out.println(userService.getAllUsers());
+        //System.out.println(userService.getAllUsers());
         model.addAttribute("users", userService.getAllUsers());
         return "pages/index";
     }
@@ -73,7 +73,7 @@ public class AdminController {
         return "pages/edit";
     }
 
-    @PatchMapping("/users/{id}")
+    @PatchMapping("/users/edit/{id}")
     public String update(@ModelAttribute("user") @Valid User user,
                          @PathVariable("id") Long id,
                          @RequestParam(value = "ADMIN", required = false) boolean isAdmin,
@@ -88,12 +88,15 @@ public class AdminController {
 
         if (isAdmin) {
             roles.add(roleService.findRoleById(1));
+            System.out.println(roleService.findRoleById(1));
         }
         if (isUser) {
             roles.add(roleService.findRoleById(2));
+            System.out.println(roleService.findRoleById(2));
         }
 
         user.setRoles(roles);
+        System.out.println(user);
         userService.update(id, user);
         return "redirect:/admin/users";
     }
